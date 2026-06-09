@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>World Cup 2026 Sweepstake</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #080d1c; color: #e8eaf6; font-family: 'Segoe UI', system-ui, sans-serif; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+    @keyframes spin { to{transform:rotate(360deg)} }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const HOST_PASSWORD = "ClaudeDraw";
+    const ALL_TEAMS = [
+      { name: "France", flag: "🇫🇷", conf: "UEFA" },
+      { name: "Spain", flag: "🇪🇸", conf: "UEFA" },
+      { name: "England", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", conf: "UEFA" },
+      { name: "Portugal", flag: "🇵🇹", conf: "UEFA" },
+      { name: "Germany", flag: "🇩🇪", conf: "UEFA" },
+      { name: "Netherlands", flag: "🇳🇱", conf: "UEFA" },
+      { name: "Belgium", flag: "🇧🇪", conf: "UEFA" },
+      { name: "Croatia", flag: "🇭🇷", conf: "UEFA" },
+      { name: "Austria", flag: "🇦🇹", conf: "UEFA" },
+      { name: "Switzerland", flag: "🇨🇭", conf: "UEFA" },
+      { name: "Scotland", flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", conf: "UEFA" },
+      { name: "Norway", flag: "🇳🇴", conf: "UEFA" },
+      { name: "Bosnia & Herzegovina", flag: "🇧🇦", conf: "UEFA" },
+      { name: "Sweden", flag: "🇸🇪", conf: "UEFA" },
+      { name: "Turkiye", flag: "🇹🇷", conf: "UEFA" },
+      { name: "Czech Republic", flag: "🇨🇿", conf: "UEFA" },
+      { name: "Argentina", flag: "🇦🇷", conf: "CONMEBOL" },
+      { name: "Brazil", flag: "🇧🇷", conf: "CONMEBOL" },
+      { name: "Uruguay", flag: "🇺🇾", conf: "CONMEBOL" },
+      { name: "Colombia", flag: "🇨🇴", conf: "CONMEBOL" },
+      { name: "Ecuador", flag: "🇪🇨", conf: "CONMEBOL" },
+      { name: "Paraguay", flag: "🇵🇾", conf: "CONMEBOL" },
+      { name: "USA", flag: "🇺🇸", conf: "CONCACAF" },
+      { name: "Mexico", flag: "🇲🇽", conf: "CONCACAF" },
+      { name: "Canada", flag: "🇨🇦", conf: "CONCACAF" },
+      { name: "Panama", flag: "🇵🇦", conf: "CONCACAF" },
+      { name: "Haiti", flag: "🇭🇹", conf: "CONCACAF" },
+      { name: "Curacao", flag: "🇨🇼", conf: "CONCACAF" },
+      { name: "Morocco", flag: "🇲🇦", conf: "CAF" },
+      { name: "Senegal", flag: "🇸🇳", conf: "CAF" },
+      { name: "Egypt", flag: "🇪🇬", conf: "CAF" },
+      { name: "Ivory Coast", flag: "🇨🇮", conf: "CAF" },
+      { name: "Ghana", flag: "🇬🇭", conf: "CAF" },
+      { name: "South Africa", flag: "🇿🇦", conf: "CAF" },
+      { name: "DR Congo", flag: "🇨🇩", conf: "CAF" },
+      { name: "Tunisia", flag: "🇹🇳", conf: "CAF" },
+      { name: "Algeria", flag: "🇩🇿", conf: "CAF" },
+      { name: "Cape Verde", flag: "🇨🇻", conf: "CAF" },
+      { name: "Japan", flag: "🇯🇵", conf: "AFC" },
+      { name: "South Korea", flag: "🇰🇷", conf: "AFC" },
+      { name: "Australia", flag: "🇦🇺", conf: "AFC" },
+      { name: "Iran", flag: "🇮🇷", conf: "AFC" },
+      { name: "Saudi Arabia", flag: "🇸🇦", conf: "AFC" },
+      { name: "Qatar", flag: "🇶🇦", conf: "AFC" },
+      { name: "Iraq", flag: "🇮🇶", conf: "AFC" },
+      { name: "Jordan", flag: "🇯🇴", conf: "AFC" },
+      { name: "Uzbekistan", flag: "🇺🇿", conf: "AFC" },
+      { name: "New Zealand", flag: "🇳🇿", conf: "OFC" },
+    ];
+    const PARTICIPANTS = [
+      "Himali","Shika","Prianka","Safa","Courtney","Yash","Saloni","Eshan",
+      "David","Ravin","Ravi","Nitya","Rohan","Hemang","KD","Trish",
+      "Chandni","Krishi","Kangan","Sonali","Anand","Hannah","Mihit","Raoul"
+    ];
+    const CONF_COLORS = {
+      UEFA:"#3b82f6", CONMEBOL:"#f59e0b", CONCACAF:"#10b981",
+      CAF:"#ef4444", AFC:"#8b5cf6", OFC:"#06b6d4"
+    };
+    const CONF_RGB = {
+      UEFA:[59,130,246], CONMEBOL:[245,158,11], CONCACAF:[16,185,129],
+      CAF:[239,68,68], AFC:[139,92,246], OFC:[6,182,212]
+    };
+    function shuffle(arr) {
+      const a=[...arr];
+      for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+      return a;
+    }
+    function buildAllocations() {
+      const teams=shuffle(ALL_TEAMS);
+      return PARTICIPANTS.map((p,i)=>({participant:p,team1:teams[i],team2:teams[i+24]}));
+    }
+    function generatePDF(allocations) {
+      const {jsPDF} = window.jspdf;
+      const doc = new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+      const pw=210, margin=14, colW=(pw-margin*2-6)/2, rowH=18;
+      doc.setFillColor(184,149,15);
+      doc.rect(0,0,pw,28,"F");
+      doc.setTextColor(26,15,0);
+      doc.setFontSize(18);
+      doc.setFont("helvetica","bold");
+      doc.text("FIFA World Cup 2026",pw/2,11,{align:"center"});
+      doc.setFontSize(9);
+      doc.setFont("helvetica","normal");
+      doc.text("Sweepstake Draw Results",pw/2,17,{align:"center"});
+      const now=new Date();
+      doc.setFontSize(7.5);
+      doc.text(`Generated: ${now.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}`,pw/2,23,{align:"center"});
+      let y=36;
+      doc.setTextColor(40,40,40);
+      doc.setFontSize(10);
+      doc.setFont("helvetica","bold");
+      doc.text("Full Allocation — 24 Participants, 48 Teams",margin,y);
+      y+=7;
+      const leftX=margin, rightX=margin+colW+6;
+      allocations.forEach((alloc,i)=>{
+        const col=i%2===0?leftX:rightX;
+        const row=Math.floor(i/2);
+        const cardY=y+row*(rowH+4);
+        doc.setFillColor(245,247,252);
+        doc.roundedRect(col,cardY,colW,rowH,2,2,"F");
+        const c1=CONF_RGB[alloc.team1.conf];
+        doc.setFillColor(c1[0],c1[1],c1[2]);
+        doc.roundedRect(col,cardY,3,rowH,1,1,"F");
+        doc.setTextColor(30,30,30);
+        doc.setFontSize(8.5);
+        doc.setFont("helvetica","bold");
+        doc.text(alloc.participant,col+6,cardY+5.5);
+        doc.setFontSize(7.5);
+        doc.setFont("helvetica","normal");
+        doc.setTextColor(50,50,50);
+        doc.text(`1. ${alloc.team1.name}`,col+6,cardY+10.5);
+        const t1c=CONF_RGB[alloc.team1.conf],t1label=alloc.team1.conf,t1w=t1label.length*1.6+4;
+        doc.setFillColor(t1c[0],t1c[1],t1c[2]);
+        doc.roundedRect(col+colW-t1w-2,cardY+7,t1w,4.5,1,1,"F");
+        doc.setTextColor(255,255,255);
+        doc.setFontSize(5.5);
+        doc.setFont("helvetica","bold");
+        doc.text(t1label,col+colW-t1w/2-2,cardY+10.2,{align:"center"});
+        doc.setFontSize(7.5);
+        doc.setFont("helvetica","normal");
+        doc.setTextColor(50,50,50);
+        doc.text(`2. ${alloc.team2.name}`,col+6,cardY+15.5);
+        const t2c=CONF_RGB[alloc.team2.conf],t2label=alloc.team2.conf,t2w=t2label.length*1.6+4;
+        doc.setFillColor(t2c[0],t2c[1],t2c[2]);
+        doc.roundedRect(col+colW-t2w-2,cardY+12.5,t2w,4.5,1,1,"F");
+        doc.setTextColor(255,255,255);
+        doc.setFontSize(5.5);
+        doc.setFont("helvetica","bold");
+        doc.text(t2label,col+colW-t2w/2-2,cardY+15.7,{align:"center"});
+      });
+      const footerY=284;
+      doc.setFillColor(184,149,15);
+      doc.rect(0,footerY,pw,13,"F");
+      doc.setTextColor(26,15,0);
+      doc.setFontSize(7);
+      doc.setFont("helvetica","normal");
+      doc.text("Good luck everyone! USA - Canada - Mexico  |  11 June - 19 July 2026",pw/2,footerY+7,{align:"center"});
+      doc.save("WorldCup2026_Sweepstake_Results.pdf");
+    }
+
+    const { useState, useEffect, useRef } = React;
+
+    function App() {
+      const [allocations] = useState(buildAllocations);
+      const [revealed, setRevealed] = useState(0);
+      const [running, setRunning] = useState(false);
+      const [view, setView] = useState("draw");
+      const [isHost, setIsHost] = useState(false);
+      const [showModal, setShowModal] = useState(false);
+      const [pwInput, setPwInput] = useState("");
+      const [pwError, setPwError] = useState(false);
+      const [pdfLoading, setPdfLoading] = useState(false);
+      const timerRef = useRef(null);
+
+      useEffect(()=>{
+        if(!running){clearInterval(timerRef.current);return;}
+        timerRef.current=setInterval(()=>{
+          setRevealed(r=>{
+            if(r>=48){setRunning(false);clearInterval(timerRef.current);return r;}
+            return r+1;
+          });
+        },5000);
+        return ()=>clearInterval(timerRef.current);
+      },[running]);
+
+      function attemptLogin(){
+        if(pwInput===HOST_PASSWORD){setIsHost(true);setShowModal(false);setPwInput("");setPwError(false);}
+        else{setPwError(true);setPwInput("");}
+      }
+
+      function handlePDF(){
+        setPdfLoading(true);
+        setTimeout(()=>{generatePDF(allocations);setPdfLoading(false);},100);
+      }
+
+      const done=revealed>=48;
+      const lastIdx=revealed-1;
+      const lastPI=lastIdx>=0?lastIdx%24:-1;
+      const lastPass=lastIdx>=0?Math.floor(lastIdx/24):-1;
+
+      return (
+        <div style={{minHeight:"100vh",background:"linear-gradient(160deg,#080d1c 0%,#0f1b38 60%,#0a1628 100%)",paddingBottom:48}}>
+          {showModal&&(
+            <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.75)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <div style={{background:"#111827",border:"1px solid #2a3a5c",borderRadius:14,padding:"32px 36px",width:320}}>
+                <div style={{fontSize:28,textAlign:"center",marginBottom:6}}>🔐</div>
+                <div style={{fontSize:16,fontWeight:800,textAlign:"center",marginBottom:4}}>Host Login</div>
+                <div style={{fontSize:12,color:"#667",textAlign:"center",marginBottom:20}}>Enter your host password to control the draw</div>
+                <input type="password" value={pwInput} onChange={e=>{setPwInput(e.target.value);setPwError(false);}} onKeyDown={e=>e.key==="Enter"&&attemptLogin()} placeholder="Password" autoFocus
+                  style={{width:"100%",padding:"10px 14px",borderRadius:8,fontSize:14,border:`1px solid ${pwError?"#ef4444":"#2a3a5c"}`,background:"#0d1630",color:"#fff",outline:"none",boxSizing:"border-box",marginBottom:pwError?6:16}}/>
+                {pwError&&<div style={{fontSize:12,color:"#ef4444",marginBottom:12}}>Incorrect password. Please try again.</div>}
+                <div style={{display:"flex",gap:8}}>
+                  <button onClick={()=>{setShowModal(false);setPwInput("");setPwError(false);}} style={{flex:1,padding:"10px",borderRadius:8,border:"1px solid #2a3a5c",background:"transparent",color:"#667",cursor:"pointer",fontSize:13}}>Cancel</button>
+                  <button onClick={attemptLogin} style={{flex:1,padding:"10px",borderRadius:8,border:"none",background:"linear-gradient(135deg,#b8950f,#f5cc5a)",color:"#1a0f00",fontWeight:800,cursor:"pointer",fontSize:13}}>Login</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div style={{background:"linear-gradient(90deg,#b8950f,#f5cc5a,#b8950f)",padding:"16px 24px"}}>
+            <div style={{maxWidth:920,margin:"0 auto",display:"flex",alignItems:"center",gap:14,flexWrap:"wrap"}}>
+              <div style={{fontSize:40}}>⚽</div>
+              <div>
+                <div style={{fontSize:10,fontWeight:800,letterSpacing:4,color:"#5a3e00",textTransform:"uppercase"}}>FIFA</div>
+                <div style={{fontSize:26,fontWeight:900,color:"#1a0f00",lineHeight:1}}>World Cup 2026</div>
+                <div style={{fontSize:12,fontWeight:700,color:"#5a3e00",letterSpacing:2,textTransform:"uppercase"}}>Sweepstake Draw</div>
+              </div>
+              <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:16}}>
+                {isHost?(
+                  <div style={{display:"flex",alignItems:"center",gap:7,padding:"5px 12px",borderRadius:20,background:"rgba(0,0,0,0.2)",border:"1px solid rgba(0,0,0,0.3)"}}>
+                    <span style={{fontSize:13}}>🔓</span>
+                    <span style={{fontSize:11,fontWeight:800,color:"#1a0f00"}}>HOST</span>
+                    <button onClick={()=>{setIsHost(false);setRunning(false);}} style={{fontSize:10,background:"none",border:"none",color:"#5a3e00",cursor:"pointer",padding:0,marginLeft:4,fontWeight:700}}>logout</button>
+                  </div>
+                ):(
+                  <button onClick={()=>setShowModal(true)} style={{padding:"6px 14px",borderRadius:20,border:"1px solid rgba(0,0,0,0.25)",background:"rgba(0,0,0,0.15)",color:"#3a2800",fontSize:11,fontWeight:700,cursor:"pointer"}}>🔐 Host Login</button>
+                )}
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:32,fontWeight:900,color:"#1a0f00",lineHeight:1}}>{revealed}<span style={{fontSize:14,fontWeight:500,opacity:0.6}}>/48</span></div>
+                  <div style={{fontSize:11,color:"#5a3e00",fontWeight:600}}>teams drawn</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{background:"#0d1630",borderBottom:"1px solid #1e2d54",display:"flex",justifyContent:"center"}}>
+            {[["draw","🎱 Live Draw"],["results","📋 Results"],["teams","🌍 All 48 Teams"]].map(([id,label])=>(
+              <button key={id} onClick={()=>setView(id)} style={{padding:"12px 24px",border:"none",cursor:"pointer",fontSize:12,fontWeight:700,letterSpacing:1,textTransform:"uppercase",background:"transparent",color:view===id?"#f5cc5a":"#556",borderBottom:view===id?"2px solid #f5cc5a":"2px solid transparent"}}>{label}</button>
+            ))}
+          </div>
+
+          <div style={{maxWidth:920,margin:"0 auto",padding:"20px 16px 0"}}>
+            {view!=="teams"&&(
+              <div style={{display:"flex",gap:10,marginBottom:20,alignItems:"center",flexWrap:"wrap",minHeight:44}}>
+                {isHost?(
+                  <>
+                    {!done&&!running&&<button onClick={()=>setRunning(true)} style={{padding:"11px 26px",borderRadius:8,border:"none",cursor:"pointer",background:"linear-gradient(135deg,#b8950f,#f5cc5a)",color:"#1a0f00",fontWeight:800,fontSize:14}}>▶ {revealed===0?"Start Draw":"Resume"}</button>}
+                    {running&&<>
+                      <div style={{padding:"11px 20px",borderRadius:8,background:"rgba(245,204,90,0.12)",border:"1px solid rgba(245,204,90,0.3)",color:"#f5cc5a",fontWeight:700,fontSize:14,display:"flex",alignItems:"center",gap:8}}>
+                        <span style={{width:9,height:9,borderRadius:"50%",background:"#f5cc5a",display:"inline-block",animation:"blink 1s infinite"}}/>Drawing…
+                      </div>
+                      <button onClick={()=>setRunning(false)} style={{padding:"11px 20px",borderRadius:8,border:"1px solid #334",background:"transparent",color:"#889",cursor:"pointer",fontSize:13}}>⏸ Pause</button>
+                    </>}
+                    {done&&<div style={{padding:"11px 20px",borderRadius:8,background:"rgba(16,185,129,0.15)",border:"1px solid rgba(16,185,129,0.4)",color:"#10b981",fontWeight:700,fontSize:14}}>✅ Draw Complete!</div>}
+                    <button onClick={()=>{setRunning(false);window.location.reload();}} style={{padding:"9px 18px",borderRadius:8,border:"1px solid #334",background:"transparent",color:"#667",cursor:"pointer",fontSize:12}}>🔄 New Draw</button>
+                  </>
+                ):(
+                  <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 16px",borderRadius:8,background:"rgba(255,255,255,0.03)",border:"1px solid #1e2d54"}}>
+                    {running?<><span style={{width:8,height:8,borderRadius:"50%",background:"#10b981",display:"inline-block",animation:"blink 1s infinite"}}/><span style={{fontSize:13,color:"#10b981",fontWeight:600}}>Draw in progress — sit back and enjoy!</span></>
+                    :done?<span style={{fontSize:13,color:"#10b981",fontWeight:600}}>✅ Draw complete!</span>
+                    :<><span style={{fontSize:13}}>⏳</span><span style={{fontSize:13,color:"#667"}}>Waiting for the host to start the draw…</span></>}
+                  </div>
+                )}
+                <button onClick={handlePDF} disabled={!done||pdfLoading} title={!done?"Available once the draw is complete":"Download full results as PDF"}
+                  style={{marginLeft:"auto",padding:"9px 18px",borderRadius:8,fontSize:12,fontWeight:700,cursor:done?"pointer":"not-allowed",display:"flex",alignItems:"center",gap:7,border:done?"1px solid rgba(245,204,90,0.5)":"1px solid #1e2d54",background:done?"rgba(245,204,90,0.1)":"rgba(255,255,255,0.02)",color:done?"#f5cc5a":"#334",transition:"all 0.3s"}}>
+                  {pdfLoading?<><span style={{display:"inline-block",width:12,height:12,border:"2px solid #f5cc5a",borderTopColor:"transparent",borderRadius:"50%",animation:"spin 0.7s linear infinite"}}/> Generating…</>:<>📥 Download Results PDF</>}
+                </button>
+              </div>
+            )}
+
+            {view==="draw"&&revealed>0&&(
+              <div style={{marginBottom:20,padding:"14px 20px",borderRadius:10,background:"rgba(245,204,90,0.08)",border:"1px solid rgba(245,204,90,0.25)",display:"flex",alignItems:"center",gap:14,flexWrap:"wrap"}}>
+                <span style={{fontSize:28}}>🎉</span>
+                <div>
+                  <div style={{fontSize:10,color:"#f5cc5a",fontWeight:700,letterSpacing:2,textTransform:"uppercase",marginBottom:3}}>Latest — {lastPass===0?"Round 1":"Round 2"}</div>
+                  {(()=>{
+                    const team=lastPass===0?allocations[lastPI].team1:allocations[lastPI].team2;
+                    return <div style={{fontSize:18,fontWeight:800}}>{allocations[lastPI].participant}<span style={{color:"#f5cc5a",margin:"0 8px"}}>→</span>{team.flag} {team.name}<span style={{marginLeft:8,fontSize:10,padding:"2px 7px",borderRadius:4,background:CONF_COLORS[team.conf]+"33",color:CONF_COLORS[team.conf],fontWeight:700}}>{team.conf}</span></div>;
+                  })()}
+                </div>
+              </div>
+            )}
+
+            {view==="draw"&&(
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(195px,1fr))",gap:9}}>
+                {allocations.map((alloc,i)=>{
+                  const r1=revealed>=i+1,r2=revealed>=i+25;
+                  const isLive=running&&(revealed===i||revealed===i+24);
+                  return <div key={i} style={{borderRadius:10,padding:"11px 13px",border:`1px solid ${isLive?"#f5cc5a":"#1a2540"}`,background:isLive?"rgba(245,204,90,0.1)":"rgba(255,255,255,0.025)",boxShadow:isLive?"0 0 16px rgba(245,204,90,0.18)":"none",transition:"all 0.4s"}}>
+                    <div style={{fontSize:11,fontWeight:700,color:"#778",marginBottom:7}}>{alloc.participant}</div>
+                    {[alloc.team1,alloc.team2].map((team,pass)=>{
+                      const shown=pass===0?r1:r2;
+                      return <div key={pass} style={{marginTop:pass===1?5:0,padding:"6px 8px",borderRadius:6,minHeight:30,background:shown?"rgba(255,255,255,0.06)":"rgba(255,255,255,0.02)",border:`1px solid ${shown?CONF_COLORS[team.conf]+"44":"#1a2540"}`,display:"flex",alignItems:"center",gap:6,transition:"all 0.5s"}}>
+                        {shown?<><span style={{fontSize:17}}>{team.flag}</span><span style={{fontSize:12,fontWeight:700,flex:1}}>{team.name}</span><span style={{fontSize:9,padding:"2px 5px",borderRadius:3,background:CONF_COLORS[team.conf]+"33",color:CONF_COLORS[team.conf],fontWeight:700}}>{team.conf}</span></>
+                        :<span style={{fontSize:11,color:"#334",fontStyle:"italic"}}>{pass===0?"Team 1 pending…":"Team 2 pending…"}</span>}
+                      </div>;
+                    })}
+                  </div>;
+                })}
+              </div>
+            )}
+
+            {view==="results"&&(
+              <div style={{display:"flex",flexDirection:"column",gap:7}}>
+                <div style={{fontSize:12,color:"#445",marginBottom:6}}>{revealed<48?`${revealed} of 48 allocations revealed so far`:"All 48 allocations confirmed"}</div>
+                {allocations.map((alloc,i)=>{
+                  const r1=revealed>=i+1,r2=revealed>=i+25;
+                  return <div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 14px",borderRadius:9,background:"rgba(255,255,255,0.03)",border:"1px solid #1a2540",flexWrap:"wrap"}}>
+                    <div style={{width:100,fontSize:12,fontWeight:700,color:"#aab",flexShrink:0}}>{alloc.participant}</div>
+                    {[{team:alloc.team1,shown:r1},{team:alloc.team2,shown:r2}].map(({team,shown},pass)=>(
+                      shown?<div key={pass} style={{display:"flex",alignItems:"center",gap:6,padding:"5px 10px",borderRadius:6,background:CONF_COLORS[team.conf]+"22",border:`1px solid ${CONF_COLORS[team.conf]}44`}}><span style={{fontSize:17}}>{team.flag}</span><span style={{fontSize:12,fontWeight:700}}>{team.name}</span></div>
+                      :<div key={pass} style={{padding:"5px 12px",borderRadius:6,background:"rgba(255,255,255,0.02)",border:"1px solid #1a2540",color:"#334",fontSize:11,fontStyle:"italic"}}>Not yet drawn</div>
+                    ))}
+                  </div>;
+                })}
+              </div>
+            )}
+
+            {view==="teams"&&(
+              <div>
+                <div style={{fontSize:12,color:"#556",marginBottom:16}}>All 48 confirmed teams for the 2026 FIFA World Cup, grouped by confederation.</div>
+                {Object.entries(ALL_TEAMS.reduce((acc,t)=>{(acc[t.conf]=acc[t.conf]||[]).push(t);return acc;},{})).map(([conf,teams])=>(
+                  <div key={conf} style={{marginBottom:20}}>
+                    <div style={{fontSize:11,fontWeight:800,letterSpacing:2,color:CONF_COLORS[conf],textTransform:"uppercase",marginBottom:8,borderBottom:`1px solid ${CONF_COLORS[conf]}33`,paddingBottom:5}}>{conf} — {teams.length} teams</div>
+                    <div style={{display:"flex",flexWrap:"wrap",gap:7}}>
+                      {teams.map(t=><div key={t.name} style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",borderRadius:7,background:CONF_COLORS[conf]+"18",border:`1px solid ${CONF_COLORS[conf]}33`}}><span style={{fontSize:18}}>{t.flag}</span><span style={{fontSize:12,fontWeight:700}}>{t.name}</span></div>)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
