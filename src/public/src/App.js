@@ -1,0 +1,36 @@
+import { useState, useEffect, useRef } from "react";
+
+const HOST_PASSWORD = "ClaudeDraw";
+
+const ALL_TEAMS = [
+  { name: "France",               flag: "🇫🇷", conf: "UEFA" },
+  { name: "Spain",                flag: "🇪🇸", conf: "UEFA" },
+  { name: "England",              flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", conf: "UEFA" },
+  { name: "Portugal",             flag: "🇵🇹", conf: "UEFA" },
+  { name: "Germany",              flag: "🇩🇪", conf: "UEFA" },
+  { name: "Netherlands",          flag: "🇳🇱", conf: "UEFA" },
+  { name: "Belgium",              flag: "🇧🇪", conf: "UEFA" },
+  { name: "Croatia",              flag: "🇭🇷", conf: "UEFA" },
+  { name: "Austria",              flag: "🇦🇹", conf: "UEFA" },
+  { name: "Switzerland",          flag: "🇨🇭", conf: "UEFA" },
+  { name: "Scotland",             flag: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", conf: "UEFA" },
+  { name: "Norway",               flag: "🇳🇴", conf: "UEFA" },
+  { name: "Bosnia & Herzegovina", flag: "🇧🇦", conf: "UEFA" },
+  { name: "Sweden",               flag: "🇸🇪", conf: "UEFA" },
+  { name: "Türkiye",              flag: "🇹🇷", conf: "UEFA" },
+  { name: "Czech Republic",       flag: "🇨🇿", conf: "UEFA" },
+  { name: "Argentina",            flag: "🇦🇷", conf: "CONMEBOL" },
+  { name: "Brazil",               flag: "🇧🇷", conf: "CONMEBOL" },
+  { name: "Uruguay",              flag: "🇺🇾", conf: "CONMEBOL" },
+  { name: "Colombia",             flag: "🇨🇴", conf: "CONMEBOL" },
+  { name: "Ecuador",              flag: "🇪🇨", conf: "CONMEBOL" },
+  { name: "Paraguay",             flag: "🇵🇾", conf: "CONMEBOL" },
+  { name: "USA",                  flag: "🇺🇸", conf: "CONCACAF" },
+  { name: "Mexico",               flag: "🇲🇽", conf: "CONCACAF" },
+  { name: "Canada",               flag: "🇨🇦", conf: "CONCACAF" },
+  { name: "Panama",               flag: "🇵🇦", conf: "CONCACAF" },
+  { name: "Haiti",                flag: "🇭🇹", conf: "CONCACAF" },
+  { name: "Curaçao",              flag: "🇨🇼", conf: "CONCACAF" },
+  { name: "Morocco",              flag: "🇲🇦", conf: "CAF" },
+  { name: "Senegal",              flag: "🇸🇳", conf: "CAF" },
+  { name: "
